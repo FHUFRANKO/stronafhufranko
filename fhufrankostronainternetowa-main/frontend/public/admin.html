@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Panel admina - FHU FRANKO</title>
+  <style>
+    body { 
+      font-family: system-ui, -apple-system, sans-serif; 
+      max-width: 1200px; 
+      margin: 2rem auto; 
+      padding: 0 1rem;
+      background: #f9fafb;
+    }
+    h1 { color: #222122; margin-bottom: 0.5rem; }
+    h2 { color: #222122; font-size: 1.25rem; margin-bottom: 1rem; }
+    h3 { color: #222122; font-size: 1.1rem; margin-bottom: 0.75rem; }
+    .card { 
+      background: white;
+      border: 1px solid #e5e7eb; 
+      border-radius: 12px; 
+      padding: 24px; 
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    button { 
+      padding: 10px 16px; 
+      border-radius: 8px; 
+      border: 1px solid #d1d5db; 
+      cursor: pointer;
+      background: white;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    button:hover { background: #f3f4f6; }
+    button.primary {
+      background: #F3BC30;
+      border-color: #F3BC30;
+      color: #222122;
+      font-weight: 600;
+    }
+    button.primary:hover { background: #E0AA2B; }
+    button.danger {
+      background: #ef4444;
+      border-color: #ef4444;
+      color: white;
+    }
+    button.danger:hover { background: #dc2626; }
+    input { 
+      padding: 10px 12px; 
+      border: 1px solid #d1d5db; 
+      border-radius: 8px; 
+      margin-right: 8px;
+      font-size: 14px;
+      min-width: 200px;
+    }
+    input:focus {
+      outline: none;
+      border-color: #F3BC30;
+      box-shadow: 0 0 0 3px rgba(243, 188, 48, 0.1);
+    }
+    .row { 
+      display: flex; 
+      gap: 12px; 
+      flex-wrap: wrap; 
+      align-items: center; 
+      margin-bottom: 12px;
+    }
+    .msg {
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+    .msg.error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+    .msg.success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+    .msg.info {
+      background: #dbeafe;
+      color: #1e40af;
+      border: 1px solid #bfdbfe;
+    }
+    ul { 
+      list-style: none; 
+      padding: 0; 
+    }
+    ul li { 
+      padding: 8px 12px; 
+      background: #f9fafb; 
+      margin-bottom: 8px; 
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: monospace;
+      word-break: break-all;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-right: 8px;
+    }
+    .badge.admin {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .badge.user {
+      background: #e0e7ff;
+      color: #3730a3;
+    }
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #f3f4f6;
+      border-top-color: #F3BC30;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <h1>🚐 Panel Admina - FHU FRANKO</h1>
+  <p style="color: #6b7280; margin-bottom: 2rem;">System zarządzania ogłoszeniami busów i opiniami</p>
+
+  <!-- wczytaj ENV -->
+  <script src="env.js"></script>
+  <!-- Supabase v2 z CDN -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+  <!-- Strefa logowania -->
+  <div id="login" class="card">
+    <h2>🔐 Logowanie</h2>
+    <p style="color: #6b7280; font-size: 14px; margin-bottom: 1rem;">
+      Zaloguj się kontem administratora z Supabase
+    </p>
+    <div class="row">
+      <input id="email" type="email" placeholder="Email administratora" />
+      <input id="password" type="password" placeholder="Hasło" />
+      <button id="signin" class="primary">Zaloguj się</button>
+    </div>
+    <div id="loginMsg"></div>
+  </div>
+
+  <!-- Panel po zalogowaniu -->
+  <div id="app" style="display:none">
+    <div class="card">
+      <h2>✓ Dostęp przyznany</h2>
+      <p>Zalogowano jako: <strong id="who"></strong> <span id="adminBadge"></span></p>
+      <div class="row">
+        <button id="checkMe">🔄 Odśwież status</button>
+        <button id="signout" class="danger">Wyloguj się</button>
+      </div>
+    </div>
+
+    <!-- Sekcja testowa API -->
+    <div class="card">
+      <h3>📊 Test endpointów administracyjnych</h3>
+      <p style="color: #6b7280; font-size: 14px; margin-bottom: 1rem;">
+        Sprawdź dostęp do zabezpieczonych zasobów API
+      </p>
+      
+      <div class="row">
+        <button id="loadBuses">Pobierz /api/ogloszenia</button>
+        <button id="loadOpinions">Pobierz /api/opinie</button>
+        <button id="loadStats">Pobierz /api/stats</button>
+      </div>
+      
+      <div id="apiOutput"></div>
+    </div>
+
+    <!-- Informacje o konfiguracji -->
+    <div class="card">
+      <h3>⚙️ Konfiguracja</h3>
+      <ul style="font-family: system-ui; font-size: 14px;">
+        <li><strong>API Base URL:</strong> <span id="apiUrl"></span></li>
+        <li><strong>Supabase URL:</strong> <span id="supabaseUrl"></span></li>
+        <li><strong>Status autentykacji:</strong> <span id="authStatus"></span></li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Inicjalizacja Supabase
+    const supabase = window.supabase.createClient(
+      window.ENV.SUPABASE_URL || '',
+      window.ENV.SUPABASE_ANON_KEY || ''
+    );
+    const API = (window.ENV.API_BASE_URL || '') + '/api';
+
+    // Helper do pobierania tokenu
+    async function getToken() {
+      const { data: { session } } = await supabase.auth.getSession();
+      return session?.access_token;
+    }
+
+    // Sprawdź status użytkownika
+    async function checkMe() {
+      const token = await getToken();
+      if (!token) {
+        showLogin();
+        return;
+      }
+
+      try {
+        const response = await fetch(API + '/me', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        if (!response.ok) {
+          showMessage('loginMsg', 'Nie udało się zweryfikować tokenu. Status: ' + response.status, 'error');
+          showLogin();
+          return;
+        }
+
+        const me = await response.json();
+        
+        if (!me.admin) {
+          showMessage('loginMsg', 'Brak uprawnień administratora dla: ' + me.email, 'error');
+          showLogin();
+          return;
+        }
+
+        // Pokazuj panel admina
+        document.getElementById('who').textContent = me.email;
+        document.getElementById('adminBadge').innerHTML = '<span class="badge admin">ADMIN</span>';
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+
+        // Wypełnij info o konfiguracji
+        document.getElementById('apiUrl').textContent = API;
+        document.getElementById('supabaseUrl').textContent = window.ENV.SUPABASE_URL || 'Nie skonfigurowane';
+        document.getElementById('authStatus').innerHTML = '<span style="color: #16a34a;">✓ Aktywna sesja</span>';
+
+      } catch (error) {
+        console.error('Check /me error:', error);
+        showMessage('loginMsg', 'Błąd połączenia z API: ' + error.message, 'error');
+        showLogin();
+      }
+    }
+
+    function showLogin() {
+      document.getElementById('login').style.display = 'block';
+      document.getElementById('app').style.display = 'none';
+    }
+
+    function showMessage(elementId, text, type = 'info') {
+      const el = document.getElementById(elementId);
+      el.innerHTML = '<div class="msg ' + type + '">' + text + '</div>';
+    }
+
+    function clearMessage(elementId) {
+      document.getElementById(elementId).innerHTML = '';
+    }
+
+    // Logowanie
+    document.getElementById('signin').onclick = async () => {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!email || !password) {
+        showMessage('loginMsg', 'Wypełnij email i hasło', 'error');
+        return;
+      }
+
+      clearMessage('loginMsg');
+      showMessage('loginMsg', 'Logowanie...', 'info');
+
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        showMessage('loginMsg', 'Błąd logowania: ' + error.message, 'error');
+        return;
+      }
+
+      showMessage('loginMsg', 'Zalogowano pomyślnie!', 'success');
+      setTimeout(() => checkMe(), 500);
+    };
+
+    // Wylogowanie
+    document.getElementById('signout').onclick = async () => {
+      await supabase.auth.signOut();
+      document.getElementById('email').value = '';
+      document.getElementById('password').value = '';
+      clearMessage('loginMsg');
+      checkMe();
+    };
+
+    // Odśwież status
+    document.getElementById('checkMe').onclick = checkMe;
+
+    // Testy API
+    async function callAPI(endpoint, buttonId) {
+      const token = await getToken();
+      const outputDiv = document.getElementById('apiOutput');
+      const button = document.getElementById(buttonId);
+      
+      button.disabled = true;
+      button.innerHTML = '<span class="loading"></span> Ładowanie...';
+      outputDiv.innerHTML = '<div class="msg info">Pobieranie danych z ' + endpoint + '...</div>';
+
+      try {
+        const response = await fetch(API + endpoint, {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        if (!response.ok) {
+          throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+        }
+
+        const data = await response.json();
+        const items = Array.isArray(data) ? data : [data];
+        
+        let html = '<div class="msg success">✓ Pobrano: ' + items.length + ' rekord(ów)</div>';
+        html += '<ul>';
+        items.slice(0, 5).forEach(item => {
+          html += '<li>' + JSON.stringify(item).substring(0, 200) + '...</li>';
+        });
+        if (items.length > 5) {
+          html += '<li><em>... i ' + (items.length - 5) + ' więcej</em></li>';
+        }
+        html += '</ul>';
+        outputDiv.innerHTML = html;
+
+      } catch (error) {
+        outputDiv.innerHTML = '<div class="msg error">❌ Błąd: ' + error.message + '</div>';
+      } finally {
+        button.disabled = false;
+        button.textContent = button.dataset.originalText;
+      }
+    }
+
+    document.getElementById('loadBuses').onclick = function() {
+      this.dataset.originalText = this.textContent;
+      callAPI('/ogloszenia', 'loadBuses');
+    };
+
+    document.getElementById('loadOpinions').onclick = function() {
+      this.dataset.originalText = this.textContent;
+      callAPI('/opinie', 'loadOpinions');
+    };
+
+    document.getElementById('loadStats').onclick = function() {
+      this.dataset.originalText = this.textContent;
+      callAPI('/stats', 'loadStats');
+    };
+
+    // Auto-restore session on page load
+    checkMe();
+
+    // Handle Enter key in login form
+    document.getElementById('password').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        document.getElementById('signin').click();
+      }
+    });
+  </script>
+</body>
+</html>

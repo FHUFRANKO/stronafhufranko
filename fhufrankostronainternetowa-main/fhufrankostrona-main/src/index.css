@@ -1,0 +1,3 @@
+
+/* FIX: ukryj wstrzykiwany placeholder Supa, który pojawia się nad treścią */
+#supa-ads-root,.supa-ads-root{display:none !important;}

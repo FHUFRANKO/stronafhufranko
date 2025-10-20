@@ -1,0 +1,314 @@
+/* Custom styles for FHU FRANKO Autohandel */
+
+.App {
+  text-align: left; /* Changed from center to maintain natural reading flow */
+}
+
+/* Hide Emergent badge - more aggressive approach */
+#emergent-badge,
+a[href*="emergent.sh"],
+[id*="emergent"], 
+[class*="emergent"],
+div[style*="position: fixed"][style*="bottom"],
+div[style*="position: fixed"][style*="right"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  z-index: -1 !important;
+}
+
+/* Hide any fixed positioned elements in bottom right that might be the badge */
+body > div:last-child {
+  display: none !important;
+}
+
+/* Override any inline styles */
+[style*="Made with"] {
+  display: none !important;
+}
+
+/* Additional CSS to hide badge */
+body::after {
+  content: "";
+}
+
+/* Use JavaScript to remove badge */
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #F3BC30;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #E0AA2B;
+}
+
+/* Smooth animations for all interactive elements except transforms */
+button, .btn, input, select, textarea {
+  transition: 
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+/* Custom focus states for accessibility */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid #F3BC30;
+  outline-offset: 2px;
+}
+
+/* Loading animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.loading {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: 
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Custom selection color */
+::selection {
+  background-color: #F3BC30;
+  color: #222122;
+}
+
+::-moz-selection {
+  background-color: #F3BC30;
+  color: #222122;
+}
+
+/* Image optimization */
+img {
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Glass morphism effect for overlays */
+.glass {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Custom button styles */
+.btn-primary {
+  background-color: #F3BC30;
+  color: #222122;
+  font-weight: 600;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-primary:hover {
+  background-color: #E0AA2B;
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Custom badge styles */
+.badge-featured {
+  background-color: #F3BC30;
+  color: #222122;
+  font-weight: 500;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+}
+
+.badge-new {
+  background-color: #10B981;
+  color: white;
+  font-weight: 500;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+}
+
+/* Custom form styles */
+.form-input {
+  border: 1px solid #E5D6B5;
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  background-color: #FEFEFD;
+  color: #222122;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-input:focus {
+  border-color: #F3BC30;
+  box-shadow: 0 0 0 3px rgba(243, 188, 48, 0.1);
+  outline: none;
+}
+
+/* Typography */
+.text-primary {
+  color: #222122;
+}
+
+.text-secondary {
+  color: #838282;
+}
+
+.text-accent {
+  color: #F3BC30;
+}
+
+/* Spacing utilities */
+.section-padding {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+.container-padding {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-padding {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-padding {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Animation for page transitions */
+.page-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Search form enhancements */
+.search-form {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(243, 188, 48, 0.05) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(229, 214, 181, 0.3);
+}
+
+/* Car card enhancements */
+.car-card {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: 
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.car-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Responsive text sizes */
+@media (max-width: 640px) {
+  h1 {
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+  
+  .hero-title {
+    font-size: 2.5rem;
+    line-height: 3rem;
+  }
+}
+
+/* Loading states */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .btn-primary {
+    border: 2px solid #222122;
+  }
+  
+  .form-input {
+    border: 2px solid #222122;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    color: black !important;
+    background: white !important;
+  }
+}
